@@ -11,13 +11,13 @@ def load_talents(db: Session):
     query = db.query(
         Talent.id.label("talent_id"),
         func.concat(Talent.firstname, " ", Talent.lastname).label("name"),
-        cast(Talent.role, String).label("role"),
+        Talent.role.label("role"),
         Talent.is_active,
         Talent.hours,
         Talent_Constraint.constraint_type.label("constraint"),
         Talent_Constraint.is_active.label("active"),
         Available_Day.day,
-        Available_Day.time,
+        Available_Day.shifts,
         Requests.requested_date,
         Requests.status
     ).join(Talent_Constraint, Talent.id == Talent_Constraint.talent_id, isouter=True).join(
@@ -33,11 +33,9 @@ def talent_availability(start_date, end_date):
     #we need date_map because the constraints in the database are day-specific not date specific and we need to map the day to the specific date
     date_map = {day.strftime("%A"): day for day in week}
     #handle talents with constraints, later come and ensure that the dates that go into the dfs are within the defined range we are working with.
-    constrained = talents.loc[(talents['constraint'].notna())].groupby(['talent_id', 'day']).agg({'time': lambda x: list(set(x)), 'role': 'first'}).reset_index().copy()
+    constrained = talents.loc[(talents['constraint'].notna())].groupby(['talent_id', 'day']).agg({'shifts': lambda x: list(set(x)), 'role': 'first'}).reset_index().copy()
     constrained.loc[:,'date'] = constrained['day'].map(date_map).dt.date
-    constrained = constrained[['talent_id', 'role', 'date', 'time']]
-    constrained = constrained.rename(columns={"time": "shifts"}) #only did this because to merge constrained and unconstrained, I need the column names to be the 
-    #same but I could go ahead and change the name of the column from talents all together -> will_do
+    constrained = constrained[['talent_id', 'role', 'date', 'shifts']]
     constrained = constrained.groupby('talent_id').agg({'talent_id': 'first', 'role': 'first', 'date': list, 'shifts': 'first'}) 
     #handle requests
     requests = talents.loc[(talents['req_date'].notna()) & (talents['status'] == 'approved')].groupby('talent_id')['req_date'].apply(lambda req: set(req)).reset_index()
@@ -85,17 +83,18 @@ def load_shift_periods(db: Session):
 
 def shift_requirements(start_date, end_date):
     templates = load_shift_periods(db)
-    week = pd.date_range(start_date, end_date)
+    week = pd.date_range(start_date, end_date) 
     #here I built the dataframe from scratch then merged it with the existing templates based on matching staffing requirements
     week_df = pd.DataFrame({'date': [day.date() for day in week]})
     week_df.loc[:, 'day'] = [day.strftime("%A") for day in week]
     week_df.loc[:, 'staffing'] = week_df['day'].apply(lambda day: staffing.low.value if day in staffing_days[staffing.low] else staffing.high.value)
     week_shifts = week_df.merge(templates[['staffing', 'shift', 'start', 'end', 'role', 'count']],on='staffing',how='left')
-   
+    pprint(week_shifts)
     return week_shifts
 
  
-
+# use classes instead so that it is easier to scale
+# separate talent availability and shift_requirements
 def schedule_talents(start_date, end_date):
     pass
 def hours_completed():
@@ -124,10 +123,13 @@ today = datetime.now()
 week = today + timedelta(days=6)
 
 #load_shift_periods(db)
-#load_talents(db)
+load_talents(db)
 #talent_availability(today, week)
 #shift_requirements(today, week)
-schedule_talents(today, week)
+#schedule_talents(today, week)
+
+
+# create classes for rules to be followed
 
 
 

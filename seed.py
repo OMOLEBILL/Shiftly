@@ -28,9 +28,9 @@ def talents():
     session = SessionLocal()
 
     session.add_all([
-            Talent(firstname="John", lastname="Doe", email="johndoe@jon.com", role="manager", contract_type="full-time", is_active=True ),
-            Talent(firstname="Jamie", lastname="Don", email="jamiedoe@jon.com", role="assistant_manager", contract_type="full-time", is_active=True ),
-            Talent(firstname="Derrick", lastname="Don", email="derrickdon@jon.com", role="supervisor", contract_type="full-time", is_active=True ),
+            Talent(firstname="John", lastname="Doe", email="johndoe@jon.com", role="leader", contract_type="full-time", is_active=True ),
+            Talent(firstname="Jamie", lastname="Don", email="jamiedoe@jon.com", role="leader", contract_type="full-time", is_active=True ),
+            Talent(firstname="Derrick", lastname="Don", email="derrickdon@jon.com", role="leader", contract_type="full-time", is_active=True ),
             Talent(firstname="Jane", lastname="Doe", email="janedoe@jon.com", role="server", contract_type="full-time", is_active=True ),
             Talent(firstname="Sally", lastname="Doe", email="sallzdoe@jon.com", role="runner", contract_type="part-time", is_active=True ),
             Talent(firstname="Mark", lastname="Doe", email="markdoe@jon.com", role="hostess", contract_type="full-time", is_active=True ),
@@ -81,20 +81,20 @@ def available_days():
     session = SessionLocal()
 
     session.add_all([
-        Available_Day(constraint_id=1, day="Monday", time="AM"),
-        Available_Day(constraint_id=1, day="Tuesday", time="AM"),
-        Available_Day(constraint_id=3, day="Sunday", time="PM"),
-        Available_Day(constraint_id=2, day="Wednesday", time="AM"),
-        Available_Day(constraint_id=5, day="Thursday", time="PM"),
-        Available_Day(constraint_id=2, day="Monday", time="AM"),
-        Available_Day(constraint_id=1, day="Sunday", time="AM"),
-        Available_Day(constraint_id=4, day="Friday", time="PM"),
-        Available_Day(constraint_id=3, day="Saturday", time="AM"),
-        Available_Day(constraint_id=3, day="Saturday", time="AM"),
-        Available_Day(constraint_id=6, day="Sunday", time="AM"),
-        Available_Day(constraint_id=5, day="Friday", time="PM"),
-        Available_Day(constraint_id=7, day="Wednesday", time="AM"),
-        Available_Day(constraint_id=7, day="Monday", time="AM"),
+        Available_Day(constraint_id=1, day="Monday", shifts="AM"),
+        Available_Day(constraint_id=1, day="Tuesday", shifts="AM"),
+        Available_Day(constraint_id=3, day="Sunday", shifts="PM"),
+        Available_Day(constraint_id=2, day="Wednesday", shifts="AM"),
+        Available_Day(constraint_id=5, day="Thursday", shifts="PM"),
+        Available_Day(constraint_id=2, day="Monday", shifts="AM"),
+        Available_Day(constraint_id=1, day="Sunday", shifts="AM"),
+        Available_Day(constraint_id=4, day="Friday", shifts="PM"),
+        Available_Day(constraint_id=3, day="Saturday", shifts="AM"),
+        Available_Day(constraint_id=3, day="Saturday", shifts="AM"),
+        Available_Day(constraint_id=6, day="Sunday", shifts="AM"),
+        Available_Day(constraint_id=5, day="Friday", shifts="PM"),
+        Available_Day(constraint_id=7, day="Wednesday", shifts="AM"),
+        Available_Day(constraint_id=7, day="Monday", shifts="AM"),
     ])
 
     session.commit()
