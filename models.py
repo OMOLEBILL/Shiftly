@@ -60,7 +60,7 @@ class Available_Day(Base):
     id = Column("id", Integer, primary_key= True, autoincrement=True)
     constraint_id = Column(Integer, ForeignKey("talent_constraints.id"))
     day = Column("day", String)
-    shifts = Column("time", String) #either all day, AM, or PM
+    shifts = Column("shifts", String) #either all day, AM, or PM
     constraints = relationship("Talent_Constraint", back_populates="available_days")
 
 

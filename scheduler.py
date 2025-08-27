@@ -24,6 +24,7 @@ def load_talents(db: Session):
         Available_Day, Talent_Constraint.id == Available_Day.constraint_id, isouter=True).join(
             Requests, Talent.id == Requests.talent_id, isouter=True)
     df = pd.read_sql(query.statement, db.bind)
+    print(df)
     return df
 
 def talent_availability(start_date, end_date):
@@ -49,9 +50,8 @@ def talent_availability(start_date, end_date):
     unconstrained.loc[:, 'shifts'] = [shifts] * len(unconstrained)
     unconstrained = unconstrained.drop_duplicates(subset=['talent_id'])
     all_talents = pd.concat([constrained, unconstrained], ignore_index=True).copy()
-    all_talents.loc[all_talents['role'] == 'manager', 'role'] = 'leader' #this will also be normalised from the database side. Instead of having all these names ie manager, assistant, etc, save them all as leader
-    all_talents.loc[all_talents['role'] == 'assistant_manager', 'role'] = 'leader'
-    all_talents.loc[all_talents['role'] == 'supervisor', 'role'] = 'leader'
+    print(constrained.columns)
+    print(unconstrained.columns)
 
     #remove all the requested dates for every talent.
     for tid, dates in all_talents[['talent_id', 'date']].itertuples(index=None, name=None):
@@ -64,7 +64,7 @@ def talent_availability(start_date, end_date):
             all_talents.at[idx, 'date'] = filtered
    
 
-       
+    #print(all_talents)  
     return all_talents
     
 def load_shift_periods(db: Session):
@@ -81,7 +81,7 @@ def load_shift_periods(db: Session):
     df = pd.read_sql(query.statement, db.bind)
     return df
 
-def shift_requirements(start_date, end_date):
+def shift_requirements(start_date, end_date) :
     templates = load_shift_periods(db)
     week = pd.date_range(start_date, end_date) 
     #here I built the dataframe from scratch then merged it with the existing templates based on matching staffing requirements
@@ -89,7 +89,6 @@ def shift_requirements(start_date, end_date):
     week_df.loc[:, 'day'] = [day.strftime("%A") for day in week]
     week_df.loc[:, 'staffing'] = week_df['day'].apply(lambda day: staffing.low.value if day in staffing_days[staffing.low] else staffing.high.value)
     week_shifts = week_df.merge(templates[['staffing', 'shift', 'start', 'end', 'role', 'count']],on='staffing',how='left')
-    pprint(week_shifts)
     return week_shifts
 
  
@@ -123,9 +122,10 @@ today = datetime.now()
 week = today + timedelta(days=6)
 
 #load_shift_periods(db)
-load_talents(db)
-#talent_availability(today, week)
-#shift_requirements(today, week)
+#load_talents(db)
+talent_availability(today, week)
+#data = shift_requirements(today, week)
+#pprint(data.to_dict('records'))
 #schedule_talents(today, week)
 
 
