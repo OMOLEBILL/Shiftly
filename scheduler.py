@@ -67,30 +67,30 @@ def talent_availability(start_date, end_date):
     return all_talents
 
 
-def create_talent_objects(talents: pd.DataFrame, weeklyhours: float = 32) -> list[talentAvailability]:
+def create_talent_objects(talents: pd.DataFrame, weeklyhours: float = 32) -> dict[int, talentAvailability]:
     """
     Returns a list of talent objects from the talent dataframes
 
     Args:
         talents: dataframe with all available talents
     Return:
-        list: talentAvailabilty
+        list: talentAvailability
     """
     talent_list = talents.to_dict('records')
-    talent_object = []
+    talent_object: dict[int, talentAvailability] = {}
     for talent in talent_list:
         for date in list(talent.get('date', [])):
             window: dict = {}
             window[date] = []
             for shift in list(talent.get('shifts', [])):
-                shift_span = map_label_to_time(shift)
+                shift_span = map_label_to_time(date, shift)
                 window[date].append(shift_span)
-            talent_object.append(talentAvailability(
+            talent_object[talent.get('talent_id')] = talentAvailability(
                 talent_id=talent.get('talent_id'),
                 role=talent.get('role'),
                 window=window,
                 weeklyhours=weeklyhours
-            ))
+            )
     return talent_object
 
 def create_shift_specification(shift_requirements: pd.DataFrame) -> list[shiftSpecification]:
@@ -126,8 +126,8 @@ def load_shift_periods(db: Session):
     df = pd.read_sql(query.statement, db.bind)
     return df
 
-def shift_requirements(start_date, end_date) :
-    templates = load_shift_periods(db)
+def shift_requirements(start_date, end_date, database = db):
+    templates = load_shift_periods(database)
     week = pd.date_range(start_date, end_date)
     #here I built the dataframe from scratch then merged it with the existing templates based on matching staffing requirements
     week_df = pd.DataFrame({'date': [day.date() for day in week]})

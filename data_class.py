@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date, time
+from datetime import date, datetime
 import enum
 
 class Role(enum.Enum):
@@ -12,8 +12,8 @@ class Role(enum.Enum):
 @dataclass
 class shiftSpecification:
     date : date
-    start: time
-    end: time
+    start: datetime
+    end: datetime
     role: Role
     count: int
 
@@ -26,6 +26,6 @@ class assignment:
 class talentAvailability:
     talent_id: int
     role: Role
-    window: dict[date, list[tuple[time, time]]]
+    window: dict[date, list[tuple[datetime, datetime]]]
     weeklyhours: float
 
