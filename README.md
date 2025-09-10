@@ -2,8 +2,7 @@
 
 Shiftly is a **shift scheduling MVP** designed to allocate employees (who Shiftly refers to as talents) to shifts efficiently while respecting availability and constraints. The project separates responsibilities clearly, applies abstraction for flexibility, and uses adapters for data transformation.
 
-> ⚠️ **Note:** This is an MVP (not yet in production). Future enhancements may include maximum hours validation, consecutive-day checks, night-to-morning shift restrictions, and employee request handling.
-
+> ⚠️ **Note:** This iteration of Shiftly is an MVP therefor not yet in production.
 ---
 
 ## Features
