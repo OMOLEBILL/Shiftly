@@ -1,8 +1,14 @@
 import psycopg2
+from dotenv import load_dotenv
+import os
+import pandas as pd
 from abc import ABC, abstractmethod
 from app.entities.entities import dbCredentials
 from psycopg2.extras import RealDictCursor
-import pandas as pd
+
+
+
+load_dotenv()
 
 class abstractDBContextManager(ABC):
     '''Abstract class that defines the interface for opening and closing the database'''
@@ -19,10 +25,10 @@ class abstractDBContextManager(ABC):
 
 def postgreCredentials():
         credentials = dbCredentials(
-    host= "*",
-    dbname= "*",
-    user= "*",
-    password= "*",
+    host= os.getenv("DB_HOST"),
+    dbname= os.getenv("DB_NAME"),
+    user= os.getenv("DB_USER"),
+    password= os.getenv("DB_PASSWORD"),
     cursor_factory= RealDictCursor
 )
         return credentials
