@@ -65,13 +65,13 @@ DB_PASSWORD=your_database_password
 - Run the schema file to create tables and views needed for shiftly
 
 ```bash
-psql -U your_user -d your_db -f schema.sql
+psql -U DB_USER -d DB_NAME -f schema.sql
 ```
 
 - Seed the database with imaginary data
 
 ```bash
-psql -U your_user -d your_db -f seed.sql
+psql -U DB_USER -d DB_NAME -f seed.sql
 ```
 
 ### 6. Run the demo
